@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,6 +41,7 @@ public class AddLine {
     public static String user = null;
     public static String pass = null;
     public static Integer slaveId = null;
+    public static String bootstrapServers = null;
     public static String userDir = System.getProperty("user.dir");
 
 
@@ -69,7 +70,9 @@ public class AddLine {
             bw.write("#canal密码，替换成自己配置的\n");
             bw.write("canal.pwd=" + pass + "\n");
             bw.write("#canal slave id\n");
-            bw.write("canal.slaveId=" + slaveId);
+            bw.write("canal.slaveId=" + slaveId + "\n");
+            bw.write("#bootstrap.servers\n");
+            bw.write("bootstrap.servers=" + bootstrapServers);
             bw.flush();
         } catch (Exception e) {
             System.out.println("Exception when edit file :" + userDir + "/conf/canal-auto.properties");
@@ -92,6 +95,7 @@ public class AddLine {
         options.addOption("u", "user", true, "");
         options.addOption("p", "pass", true, "");
         options.addOption("s", "slaveId", true, "");
+        options.addOption("bs", "bootstrap.servers", true, "");
 
 
         CommandLineParser parser = new DefaultParser();
@@ -115,6 +119,10 @@ public class AddLine {
             if (line.hasOption("slaveId")) {
                 slaveId = Integer.parseInt(line.getOptionValue("slaveId"));
             }
+            if (line.hasOption("bootstrap.servers")) {
+                bootstrapServers = line.getOptionValue("bootstrap.servers");
+            }
+
         } catch (ParseException e) {
             throw e;
         }

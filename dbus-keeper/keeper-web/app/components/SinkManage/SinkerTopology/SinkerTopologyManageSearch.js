@@ -23,9 +23,9 @@ export default class SinkerTopologyManageSearch extends Component {
     })
   }
 
-  render () {
+  render() {
     const {getFieldDecorator} = this.props.form
-    const {onShowModal} = this.props
+    const {onOpen} = this.props
     return (
       <div className="form-search">
         <Form autoComplete="off" layout="inline" className={styles.searchForm}
@@ -36,11 +36,11 @@ export default class SinkerTopologyManageSearch extends Component {
                 <Button
                   type="primary"
                   icon="plus"
-                  onClick={() => onShowModal(true)}
+                  onClick={onOpen}
                 >
                   <FormattedMessage
                     id="app.components.sinkManage.sinkerTopo.addSinkerTopology"
-                    defaultMessage="添加Sinker拓扑"
+                    defaultMessage="添加Sinker"
                   />
                 </Button>
               </FormItem>
@@ -49,7 +49,7 @@ export default class SinkerTopologyManageSearch extends Component {
               <FormItem>
                 {getFieldDecorator('sinkerName', {
                   initialValue: ''
-                })(<Input className={styles.input} placeholder="sinker name"/>)}
+                })(<Input className={styles.input} placeholder="Sinker名称"/>)}
               </FormItem>
               <FormItem>
                 <Button

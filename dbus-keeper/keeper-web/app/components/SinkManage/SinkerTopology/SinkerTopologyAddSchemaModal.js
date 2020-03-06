@@ -1,14 +1,12 @@
 import React, {Component} from 'react'
-import {Button, Col, Form, Input, message, Modal, Row, Select, Table} from 'antd'
+import {Button, Col, Form, Icon, Input, message, Modal, Row, Switch, Table} from 'antd'
 import {FormattedMessage} from 'react-intl'
 // 导入样式
 import styles from './res/styles/index.less'
 import Request from '@/app/utils/request'
-import {UPDATE_SINKER_TOPOLOGY_SCHEMA_API} from '@/app/containers/SinkManage/api'
+import {ADD_SINKER_SCHEMAS_API} from '@/app/containers/SinkManage/api'
 
 const FormItem = Form.Item
-const Option = Select.Option
-const TextArea = Input.TextArea
 
 @Form.create()
 export default class SinkerTopologyAddSchemaModal extends Component {
@@ -33,14 +31,31 @@ export default class SinkerTopologyAddSchemaModal extends Component {
     </div>
   )
 
+  renderPermission = () => (text, record, index) => {
+    return (
+      <div title={text}>
+        <Switch
+          checkedChildren={<Icon type="check"/>}
+          unCheckedChildren={<Icon type="cross"/>}
+          size="small"
+          defaultChecked={true}
+          onChange={value => this.handleSwitchChange(value, record.schemaId)}
+        />
+      </div>)
+  }
+
+  handleSwitchChange = (value, schemaId) => {
+    const {onAddAllTableChange} = this.props
+    onAddAllTableChange(value, schemaId)
+  }
+
   handleSubmit = () => {
     const {onClose, record} = this.props
-    const {selectedRows, onSetSelectRows, sinkerSchemaList} = this.props
-    Request(UPDATE_SINKER_TOPOLOGY_SCHEMA_API, {
+    const {selectedRows, onSetSelectRows} = this.props
+    Request(ADD_SINKER_SCHEMAS_API, {
       data: {
         sinkerTopology: record,
-        sinkerSchemaList: selectedRows,
-        originalSinkerSchemaList: sinkerSchemaList.filter(item => item.id != null && item.sinkerTopoId === record.id)
+        sinkerSchemaList: selectedRows
       },
       method: 'post'
     })
@@ -83,35 +98,11 @@ export default class SinkerTopologyAddSchemaModal extends Component {
       {
         title: (
           <FormattedMessage
-            id="app.components.sinkManage.sinkerTopo.id"
-            defaultMessage="id"
-          />
-        ),
-        width: '5%',
-        dataIndex: 'id',
-        key: 'id',
-        render: this.renderComponent(this.renderNomal)
-      },
-      {
-        title: (
-          <FormattedMessage
-            id="app.components.sinkManage.sinkerTopo.sinkerName"
-            defaultMessage="Sinker Name"
-          />
-        ),
-        width: '10%',
-        dataIndex: 'sinkerName',
-        key: 'sinkerName',
-        render: this.renderComponent(this.renderNomal)
-      },
-      {
-        title: (
-          <FormattedMessage
             id="app.components.resourceManage.dataSourceName"
             defaultMessage="dsName"
           />
         ),
-        width: '10%',
+        width: '12%',
         dataIndex: 'dsName',
         key: 'dsName',
         render: this.renderComponent(this.renderNomal)
@@ -135,7 +126,7 @@ export default class SinkerTopologyAddSchemaModal extends Component {
             defaultMessage="schema"
           />
         ),
-        width: '10%',
+        width: '12%',
         dataIndex: 'schemaName',
         key: 'schemaName',
         render: this.renderComponent(this.renderNomal)
@@ -147,10 +138,17 @@ export default class SinkerTopologyAddSchemaModal extends Component {
             defaultMessage="目标Topic"
           />
         ),
-        width: '15%',
+        width: '18%',
         dataIndex: 'targetTopic',
         key: 'targetTopic',
         render: this.renderComponent(this.renderNomal)
+      },
+      {
+        title: '添加全部表',
+        width: '%8',
+        render: this.renderComponent(
+          this.renderPermission('%5')
+        )
       }
     ]
 
@@ -160,6 +158,7 @@ export default class SinkerTopologyAddSchemaModal extends Component {
       },
       getCheckboxProps: item => ({
         defaultChecked: item.sinkerTopoId != null,
+        disabled: item.sinkerTopoId != null
       })
     }
 
@@ -173,10 +172,7 @@ export default class SinkerTopologyAddSchemaModal extends Component {
         onOk={this.handleSubmit}
         width={1000}
         title={<div>
-          <FormattedMessage
-            id="app.common.addSchema"
-            defaultMessage="添加schema"
-          />
+          添加schema / sinker名称: {record && record.sinkerName}
         </div>
         }
       >
@@ -192,7 +188,7 @@ export default class SinkerTopologyAddSchemaModal extends Component {
                 <FormItem>
                   {getFieldDecorator('schemaName', {
                     initialValue: null
-                  })(<Input className={styles.input} placeholder="schema名称"/>)}
+                  })(<Input className={styles.input} placeholder="Schema名称"/>)}
                 </FormItem>
               </Col>
               <Col span={12} className={styles.formRight}>
@@ -225,4 +221,5 @@ export default class SinkerTopologyAddSchemaModal extends Component {
   }
 }
 
-SinkerTopologyAddSchemaModal.propTypes = {}
+SinkerTopologyAddSchemaModal
+  .propTypes = {}
